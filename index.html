@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ứng dụng quản lý sản phẩm sử dụng hàm</title>
+	<style type="text/css">
+		html, body {
+			background: #f6f6f6;
+			font-family: Arial;
+		}
+		.regBox {
+			background: #fff;
+			max-width: 700px;
+			margin: 30px auto 0 auto;
+			box-shadow: 0px 0px 5px -3px;
+		}
+
+		.boxAddProduct {
+			padding: 26px;
+		}
+
+		.boxAddProduct .inputName {
+			outline: none;
+			border: 1px solid #e2e2e2;
+			height: 19px;
+			min-width: 276px;
+			padding: 8px;
+		}
+
+		.btn {
+			height: 37px;
+			border: none;
+			background: #FF5722;
+			padding: 10px;
+			color: #fff;
+			outline: none;
+		}
+
+		.list {
+			padding: 10px;
+		}
+
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		th {
+			padding: 12px 20px;
+			text-align: left;
+		}
+		td {
+			padding: 8px 15px;
+		}
+		tbody tr:nth-child(2n+0) {
+		  	background: #f8f8f8;
+		}
+		tr td:nth-child(1){
+			width: 60%;
+		}
+		tr td:nth-child(2){
+			width: 20%;
+		}
+		tr td:nth-child(3){
+			width: 20%;
+		}
+		.right {
+			float: right;
+			color: #FF5722;
+		}
+	</style>
+</head>
+<body>
+	<div class="regBox">
+		<div class="boxAddProduct">
+			<input class="inputName" type="text" name="text" placeholder="New product" />
+			<button onclick="addProductToList()" class="btn">Add</button>
+		</div>
+	</div>
+	<div class="regBox">
+		<div class="list">
+			<strong>Display all product</strong>
+			<span id="countProduct" class="right">0 product</span>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>Produc Name</th>
+				</tr>
+			</thead>
+			<tbody id="content">
+			</tbody>
+		</table>
+	</div>
+	<script type="text/javascript">
+		let autoID      = 0;
+		let count       = 0;
+		let listProduct = [];
+
+		let inputName    = document.querySelector('.inputName');
+		let content      = document.querySelector('#content');
+		let countProduct = document.querySelector('#countProduct');
+
+		function updateCount() {
+			countProduct.innerText = count + ' product';
+		}
+
+		function addProductToList() {
+			let product = inputName.value.trim();
+			if(product.length > 0){
+				listProduct[autoID++] = product;
+				count++;
+				appendProduct(product);
+				updateCount();
+			}else{
+				alert('Vui lòng nhập tên sản phẩm.');
+			}
+		}
+
+		function appendProduct(product) {
+			let create = document.createElement('tr');
+			let id     = autoID-1;
+			create.setAttribute('id', 'p_'+id);
+			create.innerHTML = '<td class="name'+id+'">'+product+'</td><td><button data="'+id+'" class="btn btnEdit">Edit</button></td><td><button data="'+id+'" class="btn btnDelete">Delete</button></td>';
+
+			let btnEdit   = create.querySelector('.btnEdit');
+			let btnDelete = create.querySelector('.btnDelete');
+
+			btnEdit.addEventListener('click', function(){
+				let newName = prompt('Nhập tên mới cho sản phẩm.');
+				if (newName !== null) {
+					newName = newName.trim();
+					if (newName.length > 0) {
+						let getId = this.getAttribute('data');
+						listProduct[getId] = newName;
+						document.querySelector('.name'+getId).innerText = newName;
+					}else{
+						alert('Tên không hợp lệ.');
+					}
+				}
+			});
+
+			btnDelete.addEventListener('click', function(){
+				let check = confirm('Xác nhận xóa sản phẩm này??');
+				if (check) {
+					let getId = this.getAttribute('data');
+					document.querySelector('#p_'+getId).remove();
+					listProduct[getId] = null;
+					count--;
+					updateCount();
+				}
+			});
+
+			content.appendChild(create);
+		}
+	</script>
+</body>
+</html>
